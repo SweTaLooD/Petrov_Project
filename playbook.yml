@@ -1,0 +1,30 @@
+- hosts: web
+  become: yes
+  tasks:
+    - name: Update apt cache
+      command: apt-get update
+      changed_when: false
+
+    - name: Pause for a moment to ensure apt cache is free
+      wait_for:
+        timeout: 10
+
+    - name: Install Nginx
+      command: apt-get install -y nginx
+
+- hosts: db
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      changed_when: false
+
+    - name: Pause to ensure apt cache is free
+      wait_for:
+        timeout: 15
+
+    - name: Install MySQL
+      apt:
+        name: mysql-server
+        state: present
